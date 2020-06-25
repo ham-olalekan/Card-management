@@ -45,9 +45,13 @@ public class Card implements Serializable {
     @Column(name = "bank", nullable = false)
     private String bank;
 
+    @Column(name = "hit_count")
+    private int hitCount;
+
     @PrePersist
     private void setDefault() {
         this.createdDate = Instant.now();
+        this.hitCount = 1;
     }
 
     public void setCardNumber(String cardNumber) {
@@ -74,12 +78,20 @@ public class Card implements Serializable {
         return Objects.isNull(this.type) ? "N/A" : this.type.name();
     }
 
-    public Payload getPayload(){
+    public Payload getPayload() {
         return new Payload(this.scheme, getType(), this.bank);
     }
 
     public String getCardNumber() {
         return cardNumber;
+    }
+
+    public int getHitCount() {
+        return hitCount;
+    }
+
+    public void setHitCount(int hitCount) {
+        this.hitCount = hitCount;
     }
 
     @Override

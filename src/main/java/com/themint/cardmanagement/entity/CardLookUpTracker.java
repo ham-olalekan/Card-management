@@ -4,6 +4,8 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.annotation.Id;
 
+import java.util.Map;
+
 @RedisHash("lookup_counter")
 public class CardLookUpTracker {
 
@@ -12,7 +14,7 @@ public class CardLookUpTracker {
     @Id
     private String Id; //bin
 
-    private int count;
+    private Map<String, Integer> hitCount;
 
     @PersistenceConstructor
     public CardLookUpTracker() {
@@ -26,11 +28,19 @@ public class CardLookUpTracker {
         Id = id;
     }
 
-    public int getCount() {
-        return count;
+    public Map<String, Integer> getHitCount() {
+        return hitCount;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setHitCount(Map<String, Integer> hitCount) {
+        this.hitCount = hitCount;
+    }
+
+    @Override
+    public String toString() {
+        return "CardLookUpTracker{" +
+                "Id='" + Id + '\'' +
+                ", hitCount=" + hitCount +
+                '}';
     }
 }

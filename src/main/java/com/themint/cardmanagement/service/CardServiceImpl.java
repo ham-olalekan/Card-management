@@ -1,13 +1,17 @@
 package com.themint.cardmanagement.service;
 
 import com.themint.cardmanagement.entity.Card;
+import com.themint.cardmanagement.entity.CardLookUpTracker;
 import com.themint.cardmanagement.event.BinlookupEvent;
+import com.themint.cardmanagement.repository.CardLookUpTrackerRepository;
 import com.themint.cardmanagement.repository.CardRepository;
 import com.themint.cardmanagement.vendor.paystack.PaystackClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,15 +23,18 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository repository;
     private final PaystackClient client;
-    private ApplicationEventPublisher publisher;
+    private final CardLookUpTrackerRepository trackerRepository;
+    private final ApplicationEventPublisher publisher;
 
     @Autowired
     public CardServiceImpl(CardRepository repository,
                            PaystackClient client,
+                           CardLookUpTrackerRepository trackerRepository,
                            ApplicationEventPublisher publisher) {
         this.repository = repository;
         this.client = client;
         this.publisher = publisher;
+        this.trackerRepository = trackerRepository;
     }
 
     /**
@@ -58,5 +65,19 @@ public class CardServiceImpl implements CardService {
      */
     private Optional<Card> getCardDetailsFromVendor(final String cardNumber) {
         return Optional.ofNullable(client.lookUpCard(cardNumber));
+    }
+
+    /**
+     * Fetches the card-number along
+     * with hit count
+     *
+     * @param pageRequest
+     *
+     * @return
+     */
+    @Override
+    public Page<Card> getCardHitCount(PageRequest pageRequest) {
+        Page<Card> lookUpTrackers = repository.findAll(pageRequest);
+        return lookUpTrackers;
     }
 }
