@@ -78,6 +78,10 @@ public class Card implements Serializable {
         return new Payload(this.scheme, getType(), this.bank);
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
     @Override
     public String toString() {
         return "Card{" +
