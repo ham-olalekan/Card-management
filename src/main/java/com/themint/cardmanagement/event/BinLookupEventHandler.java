@@ -37,8 +37,11 @@ public class BinLookupEventHandler {
     }
 
     /**
-     * finds card lookup info in redis
-     * then increment it by one
+     * checks redis to see if card exists
+     * if it exists increment count
+     * else start count from one
+     *
+     * @param card
      */
     private void updateCounterInRedis(Card card) {
         logger.info("Updating look-up counter in redis :::: for card: [{}]", card);
@@ -55,7 +58,18 @@ public class BinLookupEventHandler {
         newTrackerInfo.setId(card.getCardNumber());
     }
 
+    /**
+     * publishes to kafka broker
+     * @param card
+     */
     private void pushMessageToKafka(Card card) {
-
+        logger.info("Attempting to publish via kafka for card: [{}]", card.getPayload());
+        try {
+            KafkaService.publishMessage(card.getPayload());
+            logger.info("Successfully published via kafka for card: [{}]", card);
+        } catch (Exception ex) {
+            logger.error("Error occured for card: [{}] while trying to publish via kafka [{}]", card, ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 }

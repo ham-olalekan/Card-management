@@ -20,13 +20,10 @@ import java.util.Optional;
 public class CardController {
 
     private final CardService cardService;
-    private final KafkaService kafkaService;
 
     @Autowired
-    public CardController(final CardService cardService,
-                          final KafkaService kafkaService) {
+    public CardController(final CardService cardService) {
         this.cardService = cardService;
-        this.kafkaService = kafkaService;
     }
 
     @GetMapping("/verify/{cardNumber}")
@@ -36,11 +33,6 @@ public class CardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(false, "", null));
         }
         Payload payload = cardOptional.get().getPayload();
-        try {
-            kafkaService.publishMessage(payload);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(new Response(true, "successful", payload));
     }
 
