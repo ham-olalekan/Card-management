@@ -1,6 +1,10 @@
 package com.themint.cardmanagement.model;
 
-public class Payload {
+import java.io.Serializable;
+
+public class Payload implements Serializable {
+
+    private long serialVersionUID = -8040612880648325300L;
 
     private String scheme;
 
