@@ -4,7 +4,6 @@ import com.themint.cardmanagement.entity.Card;
 import com.themint.cardmanagement.model.Payload;
 import com.themint.cardmanagement.model.Response;
 import com.themint.cardmanagement.service.CardService;
-import com.themint.cardmanagement.util.kafka.KafkaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

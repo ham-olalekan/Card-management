@@ -50,6 +50,12 @@ public class CardServiceImpl implements CardService {
         return data.map(repository::save);
     }
 
+    /**
+     * makes request to vendor to get card info
+     *
+     * @param cardNumber
+     * @return
+     */
     private Optional<Card> getCardDetailsFromVendor(final String cardNumber) {
         return Optional.ofNullable(client.lookUpCard(cardNumber));
     }
