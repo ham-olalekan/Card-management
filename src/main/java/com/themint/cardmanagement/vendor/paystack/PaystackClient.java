@@ -3,6 +3,7 @@ package com.themint.cardmanagement.vendor.paystack;
 import com.themint.cardmanagement.common.exception.BINLookupException;
 import com.themint.cardmanagement.entity.Card;
 import com.themint.cardmanagement.util.http.HttpService;
+import com.themint.cardmanagement.vendor.CardVendor;
 import com.themint.cardmanagement.vendor.paystack.Response.CardBinResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
-public class PaystackClient {
+public class PaystackClient implements CardVendor {
 
     private static final Logger log = LoggerFactory.getLogger(PaystackClient.class);
 
