@@ -13,7 +13,7 @@ public class HitCountResponse implements Serializable {
 
     private int limit;
 
-    private int size;
+    private long size;
 
     private Map<String, Integer> payload;
 
@@ -44,7 +44,7 @@ public class HitCountResponse implements Serializable {
         this.limit = limit;
     }
 
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
@@ -63,7 +63,7 @@ public class HitCountResponse implements Serializable {
     public HitCountResponse(boolean success,
                             int start,
                             int limit,
-                            int size,
+                            Long size,
                             Map<String, Integer> payload) {
         this.success = success;
         this.start = start;

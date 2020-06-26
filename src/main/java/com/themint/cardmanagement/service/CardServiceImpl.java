@@ -5,6 +5,7 @@ import com.themint.cardmanagement.entity.CardLookUpTracker;
 import com.themint.cardmanagement.event.BinlookupEvent;
 import com.themint.cardmanagement.repository.CardLookUpTrackerRepository;
 import com.themint.cardmanagement.repository.CardRepository;
+import com.themint.cardmanagement.vendor.CardVendor;
 import com.themint.cardmanagement.vendor.paystack.PaystackClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,13 @@ public class CardServiceImpl implements CardService {
     private static Logger log = LoggerFactory.getLogger(CardServiceImpl.class);
 
     private final CardRepository repository;
-    private final PaystackClient client;
+    private final CardVendor client;
     private final CardLookUpTrackerRepository trackerRepository;
     private final ApplicationEventPublisher publisher;
 
     @Autowired
     public CardServiceImpl(CardRepository repository,
-                           PaystackClient client,
+                           CardVendor client,
                            CardLookUpTrackerRepository trackerRepository,
                            ApplicationEventPublisher publisher) {
         this.repository = repository;
