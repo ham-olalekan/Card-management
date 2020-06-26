@@ -11,7 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class BinLookupEventHandler {
@@ -23,20 +23,18 @@ public class BinLookupEventHandler {
     private KafkaService KafkaService;
 
     @Autowired
-    public BinLookupEventHandler(CardLookUpTrackerRepository cardLookUpTrackerRepository,
+    public BinLookupEventHandler(CardRepository cardRepository,
                                  KafkaService kafkaService) {
-        this.cardLookUpTrackerRepository = cardLookUpTrackerRepository;
+        this.cardRepository = cardRepository;
         this.KafkaService = kafkaService;
     }
 
     @EventListener
     @Async
     private void handleBinLookupEvent(final BinlookupEvent event) {
-        ForkJoinPool.commonPool().execute(()-> {
-            Card card = event.getCard();
-            updateCounter(card);
-            pushMessageToKafka(card);
-        });
+        Card card = event.getCard();
+        updateCounter(card);
+        pushMessageToKafka(card);
     }
 
     /**
@@ -47,37 +45,42 @@ public class BinLookupEventHandler {
      * @param card
      */
     private void updateCounter(Card card) {
-        int countValue = card.getHitCount();
-        card.setHitCount(countValue++);
-        cardRepository.save(card);
+        AtomicInteger countValue = new AtomicInteger(card.getHitCount());
+        card.setHitCount(countValue.getAndIncrement());
+        cardRepository
+                .findById(card.getId())
+                .ifPresent(cardUpdate -> {
+                    cardUpdate.setHitCount(countValue.getAndIncrement());
+                    cardRepository.save(cardUpdate);
+                });
     }
 
     //using redis is an overkill. ** terminate **
     /**
-    private void updateCounterInRedis(Card card) {
-        logger.info("Updating look-up counter in redis :::: for card: [{}]", card);
-        Optional<CardLookUpTracker> tracker = cardLookUpTrackerRepository.findById(card.getCardNumber());
-        Map<String, Integer> updatedHitCount = new HashMap<>();
-        tracker.ifPresent(cardTrackInfo -> {
-            Map<String, Integer> currenctTrackerInfo = cardTrackInfo.getHitCount();
-            String cardNumber = cardTrackInfo.getId();
-            int currentHitCount = currenctTrackerInfo.get(cardNumber) + 1;
-            System.out.println("current-number => "+ currenctTrackerInfo);
-            updatedHitCount.put(cardNumber, currentHitCount);
-            cardTrackInfo.setHitCount(updatedHitCount);
-            cardLookUpTrackerRepository.delete(cardTrackInfo);
-            CardLookUpTracker updated = cardLookUpTrackerRepository.save(cardTrackInfo);
-            System.out.println("updated to => "+ updated.getHitCount().get(cardNumber));
-            logger.info("Card lookup info successful updated in redis for [{}]", updated);
-        });
+     private void updateCounterInRedis(Card card) {
+     logger.info("Updating look-up counter in redis :::: for card: [{}]", card);
+     Optional<CardLookUpTracker> tracker = cardLookUpTrackerRepository.findById(card.getCardNumber());
+     Map<String, Integer> updatedHitCount = new HashMap<>();
+     tracker.ifPresent(cardTrackInfo -> {
+     Map<String, Integer> currenctTrackerInfo = cardTrackInfo.getHitCount();
+     String cardNumber = cardTrackInfo.getId();
+     int currentHitCount = currenctTrackerInfo.get(cardNumber) + 1;
+     System.out.println("current-number => "+ currenctTrackerInfo);
+     updatedHitCount.put(cardNumber, currentHitCount);
+     cardTrackInfo.setHitCount(updatedHitCount);
+     cardLookUpTrackerRepository.delete(cardTrackInfo);
+     CardLookUpTracker updated = cardLookUpTrackerRepository.save(cardTrackInfo);
+     System.out.println("updated to => "+ updated.getHitCount().get(cardNumber));
+     logger.info("Card lookup info successful updated in redis for [{}]", updated);
+     });
 
-        CardLookUpTracker newTrackerInfo = new CardLookUpTracker();
-        updatedHitCount.put(card.getCardNumber(), 1);
-        newTrackerInfo.setId(card.getCardNumber());
-        newTrackerInfo.setHitCount(updatedHitCount);
-        cardLookUpTrackerRepository.save(newTrackerInfo);
-    }
-    */
+     CardLookUpTracker newTrackerInfo = new CardLookUpTracker();
+     updatedHitCount.put(card.getCardNumber(), 1);
+     newTrackerInfo.setId(card.getCardNumber());
+     newTrackerInfo.setHitCount(updatedHitCount);
+     cardLookUpTrackerRepository.save(newTrackerInfo);
+     }
+     */
 
     /**
      * publishes to kafka broker
