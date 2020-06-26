@@ -17,7 +17,7 @@ Technologies
 - Async Messaging:
      * Apache Kafka
 
-- TO-DO
-1 Set-up security-configurations
-2 Refactor hard-coded variables to env variables
-3 complete flutterwave integration
+- TO-DO:
+     1 Set-up security-configurations
+     2 Refactor hard-coded variables to env variables
+     3 complete flutterwave integration
