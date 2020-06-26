@@ -13,18 +13,18 @@ public class KafkaServiceImpl implements KafkaService {
 
     public static Logger log = LoggerFactory.getLogger(KafkaServiceImpl.class);
 
-    private KafkaTemplate<String, Payload> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     private String topic = "com.mintfintech.card_verified"; //TODO pass this as an environment variable
 
     @Autowired
-    public KafkaServiceImpl(KafkaTemplate<String, Payload> kafkaTemplate) {
+    public KafkaServiceImpl(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
     public void publishMessage(Payload payload) {
         log.info("Preparing to dispatch message payload: [{}} via kafka messenger", payload);
-        kafkaTemplate.send(topic, payload);
+        kafkaTemplate.send(topic, payload.toString());
     }
 }

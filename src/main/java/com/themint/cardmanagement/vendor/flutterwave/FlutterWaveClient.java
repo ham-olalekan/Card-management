@@ -13,11 +13,13 @@ public class FlutterWaveClient {
 
     private final HttpService httpService;
 
-    private final String API = "https://api.paystack.co/decision/bin/%s";//TODO pass this as an env
+    private final String API = "https://api.flutterwave.com/v3/card-bins/%s";//TODO pass this as an env
     private final String TOKEN = "sk_test_50afcb23d84100f7b9e9833be77e171cc0d2ec88";//TODO pass this as an env
 
     @Autowired
     public FlutterWaveClient(HttpService httpService) {
         this.httpService = httpService;
     }
+
+
 }

@@ -12,20 +12,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
 @Entity
-public class Card implements Serializable {
-
-    public final long serialVersionUID = -7594446772514397725L;
+public class Card{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long Id;
+    private long id;
 
-    @Column(name = "card_number", nullable = false)
+    @Column(name = "card_number", unique = true)
     private String cardNumber;
 
     @Column(name = "card_scheme", nullable = false)
@@ -45,9 +42,16 @@ public class Card implements Serializable {
     @Column(name = "bank", nullable = false)
     private String bank;
 
+    @Column(name = "hit_count")
+    private int hitCount;
+
     @PrePersist
     private void setDefault() {
         this.createdDate = Instant.now();
+        this.hitCount = 1;
+    }
+
+    public Card() {
     }
 
     public void setCardNumber(String cardNumber) {
@@ -74,18 +78,37 @@ public class Card implements Serializable {
         return Objects.isNull(this.type) ? "N/A" : this.type.name();
     }
 
-    public Payload getPayload(){
+    public Payload getPayload() {
         return new Payload(this.scheme, getType(), this.bank);
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public int getHitCount() {
+        return hitCount;
+    }
+
+    public void setHitCount(int hitCount) {
+        this.hitCount = hitCount;
     }
 
     @Override
     public String toString() {
         return "Card{" +
-                "serialVersionUID=" + serialVersionUID +
-                ", Id=" + Id +
+                " Id=" + id +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", scheme='" + scheme + '\'' +
                 ", type=" + type +
+                ", status=" + status +
                 ", createdDate=" + createdDate +
                 ", bank='" + bank + '\'' +
+                ", hitCount=" + hitCount +
                 '}';
     }
 }

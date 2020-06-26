@@ -19,7 +19,7 @@ public class RedisConfig {
 
     public static final Logger log = LoggerFactory.getLogger(RedisConfig.class);
 
-    private String redisUrl = "redis://127.0.0.1:git "; //TODO this should be passed as env
+    private String redisUrl = "redis://127.0.0.1:6379"; //TODO this should be passed as env
 
     public RedisConfig() {
     }
